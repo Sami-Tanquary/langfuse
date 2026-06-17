@@ -41,7 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Card } from "@/src/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { showSuccessToast } from "@/src/features/notifications/showSuccessToast";
 import { showErrorToast } from "@/src/features/notifications/showErrorToast";
@@ -259,8 +259,6 @@ const BlobStorageIntegrationSettingsForm = ({
   const capture = usePostHogClientCapture();
   const { isLangfuseCloud } = useLangfuseCloudRegion();
   const { project } = useQueryProject();
-  const [integrationType, setIntegrationType] =
-    useState<BlobStorageIntegrationType>(BlobStorageIntegrationType.S3);
 
   // Check if this is a self-hosted instance (no cloud region set)
   const isSelfHosted = !isLangfuseCloud;
@@ -332,8 +330,10 @@ const BlobStorageIntegrationSettingsForm = ({
     disabled: isLoading,
   });
 
+  const integrationType =
+    blobStorageForm.watch("type") ?? BlobStorageIntegrationType.S3;
+
   useEffect(() => {
-    setIntegrationType(state?.type || BlobStorageIntegrationType.S3);
     blobStorageForm.reset(
       {
         type: state?.type || BlobStorageIntegrationType.S3,
@@ -434,8 +434,7 @@ const BlobStorageIntegrationSettingsForm = ({
   }
 
   const handleIntegrationTypeChange = (value: BlobStorageIntegrationType) => {
-    setIntegrationType(value);
-    blobStorageForm.setValue("type", value);
+    blobStorageForm.setValue("type", value, { shouldDirty: true });
   };
 
   return (
