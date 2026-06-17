@@ -87,9 +87,7 @@ export default function BlobStorageIntegrationSettings() {
           nextSyncAt: cfg.nextSyncAt ? new Date(cfg.nextSyncAt) : null,
           runStartedAt: cfg.runStartedAt ? new Date(cfg.runStartedAt) : null,
         });
-        return status === "running" || status === "queued"
-          ? 5_000
-          : false;
+        return status === "running" || status === "queued" ? 5_000 : false;
       },
     },
   );
@@ -336,45 +334,48 @@ const BlobStorageIntegrationSettingsForm = ({
 
   useEffect(() => {
     setIntegrationType(state?.type || BlobStorageIntegrationType.S3);
-    blobStorageForm.reset({
-      type: state?.type || BlobStorageIntegrationType.S3,
-      bucketName: state?.bucketName || "",
-      endpoint: state?.endpoint || null,
-      region: state?.region || "auto",
-      accessKeyId: state?.accessKeyId || "",
-      secretAccessKey: state?.secretAccessKey || null,
-      prefix: state?.prefix || "",
-      exportFrequency: (state?.exportFrequency || "daily") as
-        | "every_20_minutes"
-        | "daily"
-        | "weekly"
-        | "hourly",
-      enabled: state?.enabled || false,
-      forcePathStyle: state?.forcePathStyle || false,
-      fileType: state?.fileType || BlobStorageIntegrationFileType.JSONL,
-      exportMode: state?.exportMode || BlobStorageExportMode.FULL_HISTORY,
-      exportStartDate: state?.exportStartDate || null,
-      exportSource: forceEventsExport
-        ? AnalyticsIntegrationExportSource.EVENTS
-        : (() => {
-            const persisted = state?.exportSource;
-            const isEnriched =
-              persisted === AnalyticsIntegrationExportSource.EVENTS ||
-              persisted ===
-                AnalyticsIntegrationExportSource.TRACES_OBSERVATIONS_EVENTS;
-            if (persisted && (!isEnriched || eventsExportAvailable))
-              return persisted;
-            return eventsExportAvailable
-              ? AnalyticsIntegrationExportSource.EVENTS
-              : AnalyticsIntegrationExportSource.TRACES_OBSERVATIONS;
-          })(),
-      // Empty array in the DB means "export everything" (the worker falls back
-      // to all groups), so surface it as the full selection in the form.
-      exportFieldGroups: state?.exportFieldGroups?.length
-        ? (state.exportFieldGroups as ObservationFieldGroupFull[])
-        : [...OBSERVATION_FIELD_GROUPS_FULL],
-      compressed: state?.compressed ?? true,
-    });
+    blobStorageForm.reset(
+      {
+        type: state?.type || BlobStorageIntegrationType.S3,
+        bucketName: state?.bucketName || "",
+        endpoint: state?.endpoint || null,
+        region: state?.region || "auto",
+        accessKeyId: state?.accessKeyId || "",
+        secretAccessKey: state?.secretAccessKey || null,
+        prefix: state?.prefix || "",
+        exportFrequency: (state?.exportFrequency || "daily") as
+          | "every_20_minutes"
+          | "daily"
+          | "weekly"
+          | "hourly",
+        enabled: state?.enabled || false,
+        forcePathStyle: state?.forcePathStyle || false,
+        fileType: state?.fileType || BlobStorageIntegrationFileType.JSONL,
+        exportMode: state?.exportMode || BlobStorageExportMode.FULL_HISTORY,
+        exportStartDate: state?.exportStartDate || null,
+        exportSource: forceEventsExport
+          ? AnalyticsIntegrationExportSource.EVENTS
+          : (() => {
+              const persisted = state?.exportSource;
+              const isEnriched =
+                persisted === AnalyticsIntegrationExportSource.EVENTS ||
+                persisted ===
+                  AnalyticsIntegrationExportSource.TRACES_OBSERVATIONS_EVENTS;
+              if (persisted && (!isEnriched || eventsExportAvailable))
+                return persisted;
+              return eventsExportAvailable
+                ? AnalyticsIntegrationExportSource.EVENTS
+                : AnalyticsIntegrationExportSource.TRACES_OBSERVATIONS;
+            })(),
+        // Empty array in the DB means "export everything" (the worker falls back
+        // to all groups), so surface it as the full selection in the form.
+        exportFieldGroups: state?.exportFieldGroups?.length
+          ? (state.exportFieldGroups as ObservationFieldGroupFull[])
+          : [...OBSERVATION_FIELD_GROUPS_FULL],
+        compressed: state?.compressed ?? true,
+      },
+      { keepDirtyValues: true },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, isEnrichedExportAvailable, isPostCutoffCloud]);
 

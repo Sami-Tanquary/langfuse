@@ -437,7 +437,7 @@ export const handleBlobStorageIntegrationProjectJob = async (
 
     await prisma.blobStorageIntegration.update({
       where: { projectId },
-      data: { runStartedAt: new Date() },
+      data: { runStartedAt: new Date(), lastError: null, lastErrorAt: null },
     });
 
     // Preflight the persisted integration endpoint once per job inside the
