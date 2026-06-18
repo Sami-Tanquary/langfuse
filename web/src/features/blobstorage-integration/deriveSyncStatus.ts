@@ -29,12 +29,13 @@ export function deriveSyncStatus(integration: {
     const ageMs = Date.now() - integration.runStartedAt.getTime();
     if (ageMs < getMaxRunAgeMs(integration.exportFrequency)) return "running";
   }
-  if (!integration.lastSyncAt) return "idle";
 
   const now = new Date();
   if (integration.nextSyncAt && integration.nextSyncAt <= now) {
     return "queued";
   }
+
+  if (!integration.lastSyncAt) return "idle";
 
   return "up_to_date";
 }

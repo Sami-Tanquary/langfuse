@@ -213,6 +213,15 @@ describe("Blob Storage Integration Status API - GET /api/public/integrations/blo
       expectedFields: { enabled: true, lastSyncAt: null },
     },
     {
+      name: "queued (never synced, nextSyncAt in past — Run Now on fresh integration)",
+      enabled: true,
+      lastSyncAt: null,
+      nextSyncAt: TEN_MIN_AGO,
+      lastError: null,
+      lastErrorAt: null,
+      expectedStatus: "queued",
+    },
+    {
       name: "running (runStartedAt set, never synced)",
       enabled: true,
       lastSyncAt: null,

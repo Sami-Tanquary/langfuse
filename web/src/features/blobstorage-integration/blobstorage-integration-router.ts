@@ -316,7 +316,7 @@ export const blobStorageIntegrationRouter = createTRPCRouter({
             })
             .catch((rollbackError) =>
               logger.error(
-                "Failed to roll back runStartedAt after enqueue failure",
+                "Failed to roll back blob storage integration state after enqueue failure",
                 rollbackError,
               ),
             );

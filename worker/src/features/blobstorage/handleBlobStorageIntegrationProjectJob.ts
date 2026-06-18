@@ -432,7 +432,12 @@ export const handleBlobStorageIntegrationProjectJob = async (
       );
       await prisma.blobStorageIntegration.update({
         where: { projectId },
-        data: { runStartedAt: null },
+        data: {
+          runStartedAt: null,
+          nextSyncAt: new Date(
+            uncappedMaxTimestamp.getTime() + frequencyIntervalMs,
+          ),
+        },
       });
       return;
     }
