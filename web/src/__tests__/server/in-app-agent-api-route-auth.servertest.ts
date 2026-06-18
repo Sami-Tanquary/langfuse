@@ -161,6 +161,7 @@ describe("in-app agent public API route auth", () => {
       const session = createInAppAgentSession({
         orgId: org.id,
         projectId: project.id,
+        inAppAgentFeatureFlag: false,
       });
       authMocks.getServerSession.mockResolvedValue(session);
       rateLimitMocks.rateLimitRequest.mockResolvedValue({
@@ -321,6 +322,7 @@ function createInAppAgentSession(params: {
   projectId: string;
   admin?: boolean;
   includeProjectMembership?: boolean;
+  inAppAgentFeatureFlag?: boolean;
 }): Session {
   const includeProjectMembership = params.includeProjectMembership ?? true;
 
@@ -333,7 +335,7 @@ function createInAppAgentSession(params: {
       email: "test@example.com",
       image: null,
       admin: params.admin ?? false,
-      featureFlags: { inAppAgent: true },
+      featureFlags: { inAppAgent: params.inAppAgentFeatureFlag ?? true },
       organizations: includeProjectMembership
         ? [
             {

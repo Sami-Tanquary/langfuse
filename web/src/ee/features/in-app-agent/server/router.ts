@@ -229,7 +229,10 @@ async function assertInAppAgentAvailable({
     );
   }
 
-  const isInAppAgentEnabled = ctx.session.user.featureFlags.inAppAgent === true;
+  // TODO(remove ~2026-06-24): the Langfuse Assistant is now GA for entitled
+  // users. Kept as a force-on shim so rollback to the per-user Feature Preview
+  // opt-in is local to this line.
+  const isInAppAgentEnabled: boolean = true;
 
   if (!isInAppAgentEnabled) {
     throw new ForbiddenError("Assistant is not enabled for this user");

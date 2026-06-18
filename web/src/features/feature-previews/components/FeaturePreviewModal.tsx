@@ -20,10 +20,11 @@ import filterSearchBarLightIllustration from "../assets/filter-search-bar-light.
 
 /** Flags the Feature Preview modal can toggle. Keep in sync with the
  *  userAccount.setFeaturePreviewEnabled allowlist and available-flags.ts.
- *  NOTE: "searchBar" is retired (the bar is GA on the v4 events tables) and no
- *  longer renders a tile — see ControlledFeaturePreviewModal. It is kept in the
- *  type + registry below only as dead code for a safe rollback.
- *  TODO(remove ~2026-06-19): drop "searchBar" here once GA is confirmed. */
+ *  NOTE: both current flags are retired and no longer render tiles — see
+ *  ControlledFeaturePreviewModal. They are kept in the type + registry below
+ *  only as dead code for a safe rollback.
+ *  TODO(remove ~2026-06-19): drop "searchBar" here once GA is confirmed.
+ *  TODO(remove ~2026-06-24): drop "inAppAgent" here once GA is confirmed. */
 export type PreviewFlag = "inAppAgent" | "searchBar";
 
 type PreviewIllustration = {
@@ -54,6 +55,7 @@ export type PreviewState = {
 // Static registry — one entry per preview. Order = sidebar order; each
 // preview ships separate light/dark illustrations.
 const PREVIEW_REGISTRY: PreviewRegistryItem[] = [
+  // TODO(remove ~2026-06-24): dead registry entries — "inAppAgent"
   {
     flag: "inAppAgent",
     title: "Langfuse Assistant",

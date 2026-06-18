@@ -135,7 +135,10 @@ export default async function handler(request: Request) {
       throw new ForbiddenError("User is not a member of this project");
     }
 
-    const isInAppAgentEnabled = auth.user.featureFlags.inAppAgent === true;
+    // TODO(remove ~2026-06-24): the Langfuse Assistant is now GA for entitled
+    // users. Kept as a force-on shim so rollback to the per-user Feature
+    // Preview opt-in is local to this line.
+    const isInAppAgentEnabled: boolean = true;
 
     if (!isInAppAgentEnabled) {
       throw new ForbiddenError("Assistant is not enabled for this user");

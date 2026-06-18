@@ -38,6 +38,7 @@ describe("in-app agent persistence", () => {
   const createCaller = async (
     userId = `user-${randomUUID()}`,
     plan: Plan = "cloud:hobby",
+    inAppAgentFeatureFlag = true,
   ) => {
     const setup = await createOrgProjectAndApiKey();
 
@@ -80,7 +81,7 @@ describe("in-app agent persistence", () => {
           },
         ],
         featureFlags: {
-          inAppAgent: true,
+          inAppAgent: inAppAgentFeatureFlag,
           templateFlag: true,
           excludeClickhouseRead: false,
         },
@@ -139,6 +140,18 @@ describe("in-app agent persistence", () => {
         message: expect.stringContaining("in-app-agent"),
       },
     );
+  });
+
+  it("allows entitled users without the retired in-app agent preview flag", async () => {
+    const { caller, projectId } = await createCaller(
+      `user-${randomUUID()}`,
+      "cloud:hobby",
+      false,
+    );
+
+    await expect(
+      caller.listConversations({ projectId }),
+    ).resolves.toMatchObject({ conversations: [] });
   });
 
   const startCompactRun = async (params: {

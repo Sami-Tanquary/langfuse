@@ -131,7 +131,8 @@ export function AuthenticatedLayout({
     }),
   );
 
-  const hasFeaturePreviews = isLangfuseCloud;
+  // Currently there are no feature previews available
+  const hasFeaturePreviews = false;
 
   // User navigation items for sidebar dropdown
   const userNavProps = {
