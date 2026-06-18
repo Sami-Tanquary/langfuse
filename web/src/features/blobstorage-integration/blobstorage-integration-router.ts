@@ -280,7 +280,7 @@ export const blobStorageIntegrationRouter = createTRPCRouter({
         await ctx.prisma.blobStorageIntegration.update({
           where: { projectId: input.projectId },
           data: {
-            runStartedAt: new Date(),
+            nextSyncAt: new Date(),
             lastError: null,
             lastErrorAt: null,
           },
@@ -309,7 +309,7 @@ export const blobStorageIntegrationRouter = createTRPCRouter({
             .update({
               where: { projectId: input.projectId },
               data: {
-                runStartedAt: null,
+                nextSyncAt: integration.nextSyncAt,
                 lastError: integration.lastError,
                 lastErrorAt: integration.lastErrorAt,
               },

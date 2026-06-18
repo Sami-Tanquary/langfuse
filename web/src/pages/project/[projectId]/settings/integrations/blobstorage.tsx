@@ -90,6 +90,7 @@ export default function BlobStorageIntegrationSettings() {
           lastSyncAt: cfg.lastSyncAt ? new Date(cfg.lastSyncAt) : null,
           nextSyncAt: cfg.nextSyncAt ? new Date(cfg.nextSyncAt) : null,
           runStartedAt: cfg.runStartedAt ? new Date(cfg.runStartedAt) : null,
+          exportFrequency: cfg.exportFrequency,
         });
         return status === "running" || status === "queued" ? 5_000 : false;
       },
@@ -111,6 +112,7 @@ export default function BlobStorageIntegrationSettings() {
           runStartedAt: state.data.config.runStartedAt
             ? new Date(state.data.config.runStartedAt)
             : null,
+          exportFrequency: state.data.config.exportFrequency,
         });
 
   const syncStatusToBadge: Record<BlobStorageSyncStatus, string> = {
@@ -366,7 +368,7 @@ const BlobStorageIntegrationSettingsForm = ({
           : [...OBSERVATION_FIELD_GROUPS_FULL],
         compressed: state?.compressed ?? true,
       },
-      { keepDirtyValues: true },
+      state ? { keepDirtyValues: true } : undefined,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, availability]);

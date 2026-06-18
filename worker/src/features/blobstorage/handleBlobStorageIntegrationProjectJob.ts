@@ -578,23 +578,35 @@ export const handleBlobStorageIntegrationProjectJob = async (
       },
     });
 
-    // If still catching up, immediately queue the next chunk job
+    // If still catching up, immediately queue the next chunk job.
+    // Wrapped in its own try/catch: the chunk already committed successfully
+    // (lastSyncAt advanced, data in S3), so an enqueue failure is transient —
+    // nextSyncAt=now lets the scheduler self-recover on its next tick.
     if (!caughtUp) {
-      const queue = BlobStorageIntegrationProcessingQueue.getInstance();
-      if (queue) {
-        const jobId = `${projectId}-${maxTimestamp.toISOString()}`;
-        await queue.add(
-          QueueJobs.BlobStorageIntegrationProcessingJob,
-          {
-            id: randomUUID(),
-            name: QueueJobs.BlobStorageIntegrationProcessingJob,
-            timestamp: new Date(),
-            payload: { projectId },
-          },
-          { jobId, removeOnFail: true },
-        );
-        logger.info(
-          `[BLOB INTEGRATION] Queued next catch-up chunk for project ${projectId} with jobId ${jobId}`,
+      try {
+        const queue = BlobStorageIntegrationProcessingQueue.getInstance();
+        if (queue) {
+          const jobId = `${projectId}-${maxTimestamp.toISOString()}`;
+          await queue.add(
+            QueueJobs.BlobStorageIntegrationProcessingJob,
+            {
+              id: randomUUID(),
+              name: QueueJobs.BlobStorageIntegrationProcessingJob,
+              timestamp: new Date(),
+              payload: { projectId },
+            },
+            { jobId, removeOnFail: true },
+          );
+          logger.info(
+            `[BLOB INTEGRATION] Queued next catch-up chunk for project ${projectId} with jobId ${jobId}`,
+          );
+        }
+      } catch (enqueueError) {
+        logger.warn(
+          `[BLOB INTEGRATION] Failed to enqueue next catch-up chunk for project ${projectId}; scheduler will retry on next tick`,
+          enqueueError instanceof Error
+            ? { message: enqueueError.message }
+            : {},
         );
       }
     }
